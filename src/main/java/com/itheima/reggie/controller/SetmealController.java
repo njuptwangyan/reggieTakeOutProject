@@ -1,10 +1,12 @@
 package com.itheima.reggie.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.itheima.reggie.common.R;
 import com.itheima.reggie.dto.SetmealDto;
 import com.itheima.reggie.entity.Category;
+import com.itheima.reggie.entity.Dish;
 import com.itheima.reggie.entity.Setmeal;
 import com.itheima.reggie.service.CategoryService;
 import com.itheima.reggie.service.SetmealDishService;
@@ -120,5 +122,35 @@ public class SetmealController {
         queryWrapper.orderByDesc(Setmeal::getUpdateTime);
 
         return R.success(setmealService.list(queryWrapper));
+    }
+
+    /**
+     * 停售套餐
+     * @param ids
+     * @return
+     */
+    @PostMapping("/status/0")
+    public R<String> status0(@RequestParam List<Long> ids){
+        LambdaUpdateWrapper<Setmeal> dishLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        dishLambdaUpdateWrapper.set(Setmeal::getStatus,0);
+        dishLambdaUpdateWrapper.in(Setmeal::getId,ids);
+        setmealService.update(dishLambdaUpdateWrapper);
+
+        return R.success("套餐已停售");
+    }
+
+    /**
+     * 起售套餐
+     * @param ids
+     * @return
+     */
+    @PostMapping("/status/1")
+    public R<String> status1(@RequestParam List<Long> ids){
+        LambdaUpdateWrapper<Setmeal> dishLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        dishLambdaUpdateWrapper.set(Setmeal::getStatus,1);
+        dishLambdaUpdateWrapper.in(Setmeal::getId,ids);
+        setmealService.update(dishLambdaUpdateWrapper);
+
+        return R.success("套餐已启售");
     }
 }
